@@ -1,11 +1,12 @@
 %{
 #include <stdio.h>
-#include <stdlib.h> 
+#include <stdlib.h>
 #include <math.h>
 extern char *yytext;
 extern int yyleng;
 extern int yylex(void);
 extern void yyerror(char*);
+void verificarId (int);
 int variable=0;
 %}
 %union{
@@ -16,12 +17,12 @@ int variable=0;
 %token <cadena> ID
 %token <num> CONSTANTE
 %%
-programa: INICIO sentencias FIN {printf("Programa terminado con exito");return 0;}
+programa: {printf("Ingrese codigo de lenguaje micro\n");} INICIO sentencias FIN {printf("Programa terminado con exito");return 0;}
 ;
 sentencias: sentencias sentencia 
 |sentencia
 ;
-sentencia: ID {printf("LA LONG es: %d",yyleng);if(yyleng>4) yyerror("metiste la pata");}
+sentencia: ID {verificarId(yyleng); "quiero listar los IDs que reciben asignacion"} 
 ASIGNACION expresion PYCOMA
 |LEER PARENIZQUIERDO listaVariables PARENDERECHO PYCOMA
 |ESCRIBIR PARENIZQUIERDO parametros PARENDERECHO PYCOMA 
@@ -29,13 +30,13 @@ ASIGNACION expresion PYCOMA
 expresion: primaria 
 |expresion operadorAditivo primaria
 ;
-listaVariables: listaVariables COMA ID
-|ID
+listaVariables: listaVariables COMA ID {verificarId(yyleng);}
+|ID {verificarId(yyleng);}
 ;
-parametros: parametros COMA expresion
-|expresion
+parametros: parametros COMA expresion {quiero ver si el id esta declarado}
+|expresion {quiero ver si el id esta declarado}
 ;
-primaria: ID
+primaria: ID {verificarId(yyleng);}
 |CONSTANTE {printf("valores %d %d",atoi(yytext),$1); }
 |PARENIZQUIERDO expresion PARENDERECHO
 ;
@@ -52,5 +53,7 @@ printf ("mi error personalizado es %s\n",s);
 int yywrap()  {
   return 1;  
 }
- 
- 
+
+void verificarId (int yyleng){
+  if(yyleng>10) yyerror("el ID supera la longitud maxima");
+}
