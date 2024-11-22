@@ -12,23 +12,29 @@ int variable=0;
    char* cadena;
    int num;
 } 
-%token ASIGNACION PYCOMA SUMA RESTA PARENIZQUIERDO PARENDERECHO INICIO FIN LEER ESCRIBIR
+%token ASIGNACION PYCOMA COMA SUMA RESTA PARENIZQUIERDO PARENDERECHO INICIO FIN LEER ESCRIBIR
 %token <cadena> ID
 %token <num> CONSTANTE
 %%
-programa: INICIO sentencias FIN { "Programa terminado con exito" }      //agregado
+programa: INICIO sentencias FIN {printf("Programa terminado con exito");return 0;}
 ;
 sentencias: sentencias sentencia 
 |sentencia
 ;
-sentencia: ID {printf("LA LONG es: %d",yyleng);if(yyleng>4) yyerror("metiste la pata");} // rutina semantica
+sentencia: ID {printf("LA LONG es: %d",yyleng);if(yyleng>4) yyerror("metiste la pata");}
 ASIGNACION expresion PYCOMA
-|LEER PARENIZQUIERDO expresion PARENDERECHO PYCOMA {#leer}              //agregado
-|ESCRIBIR PARENIZQUIERDO expresion PARENDERECHO PYCOMA {#escribir}      //agregado
+|LEER PARENIZQUIERDO listaVariables PARENDERECHO PYCOMA
+|ESCRIBIR PARENIZQUIERDO parametros PARENDERECHO PYCOMA 
 ;
 expresion: primaria 
-|expresion operadorAditivo primaria 
-; 
+|expresion operadorAditivo primaria
+;
+listaVariables: listaVariables COMA ID
+|ID
+;
+parametros: parametros COMA expresion
+|expresion
+;
 primaria: ID
 |CONSTANTE {printf("valores %d %d",atoi(yytext),$1); }
 |PARENIZQUIERDO expresion PARENDERECHO

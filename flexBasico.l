@@ -11,16 +11,17 @@ IDENTIFICADOR {LETRA}({LETRA}|{DIGITO})*
 
 constEntera {DIGITO}({DIGITO})*
 %%
-"inicio"(return INICIO;)
-"fin"(return FIN;)
-"escribir"(return ESCRIBIR;)
-"leer"(return LEER;)
+"inicio" {return INICIO;}
+"fin" {return FIN;}
+"escribir" {return ESCRIBIR;}
+"leer" {return LEER;}
 
 
 ":=" {return ASIGNACION;}
 {constEntera} {yylval.num=atoi(yytext);return CONSTANTE;}
 {IDENTIFICADOR} {return ID;}
 ";" {return PYCOMA;}
+"," {return COMA;}
 "(" {return PARENIZQUIERDO;}
 ")" {return PARENDERECHO;}
 "+" {return SUMA;}
