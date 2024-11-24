@@ -12,7 +12,7 @@ DIGITO [0-9]
 
 LETRA [a-zA-Z]
 
-IDENTIFICADOR {LETRA}({LETRA}|{DIGITO}){0,31}
+IDENTIFICADOR {LETRA}({LETRA}|{DIGITO})*
 
 constEntera {DIGITO}({DIGITO})*
 %%
@@ -24,25 +24,12 @@ constEntera {DIGITO}({DIGITO})*
 
 ":=" {return ASIGNACION;}
 {constEntera} {yylval.num=atoi(yytext);return CONSTANTE;}
-{IDENTIFICADOR} {
-		Simbolo *buscado = buscar(&lista, yytext);
-			if(buscado == NULL){
-			Simbolo simbolo;
-			strcpy(simbolo.nombre , yytext);
-			simbolo.valor = 0;
-			insertar(&lista, &simbolo);
-			}
-		strcpy(yylval.nombre, yytext);
-		return ID;
-}
+{IDENTIFICADOR} {return ID;}
 ";" {return PYCOMA;}
 "," {return COMA;}
 "(" {return PARENIZQUIERDO;}
 ")" {return PARENDERECHO;}
 "+" {return SUMA;}
 "-" {return RESTA;}
-.  {ECHO; yyerror("Caracter no esperado");} //puede no ir, es para filtrar los caracteres q no se esperan
+
 %%
-int yywrap(void){ //se utiliza para decidir que debe hacer yylex() cuando se alcanza el final del fichero de entrada
-	return 1;
-}
