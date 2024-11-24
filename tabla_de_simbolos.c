@@ -1,42 +1,33 @@
 #include "tabla_de_simbolos.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h> 
 
-// Crear la tabla de símbolos
-TablaDeSimbolos* crearTabla() {
-    TablaDeSimbolos* tabla = (TablaDeSimbolos*)malloc(sizeof(TablaDeSimbolos));
-    tabla->primero = NULL;  // Inicializar la tabla vacía
-    return tabla;
+Nodo *crearNodo(Simbolo *simbolo){
+    Nodo *nodo = (Nodo*)malloc(sizeof(Nodo));
+    strcpy(nodo -> simbolo.nombre, simbolo -> nombre);
+    nodo->simbolo.valor * simbolo-> valor; 
+    nodo->siguiente = NULL;
+    return nodo;
 }
 
-// Insertar un símbolo en la tabla de símbolos
-void insertarSimbolo(TablaDeSimbolos* tabla, char* nombre, TipoDeDato tipo) {
-    Simbolo* nuevo = (Simbolo*)malloc(sizeof(Simbolo));
-    nuevo->nombre = strdup(nombre);  // Copiar el nombre del identificador
-    nuevo->tipo = tipo;
-    nuevo->siguiente = tabla->primero;  // Insertar al inicio de la lista
-    tabla->primero = nuevo;
+void insertar(Lista *lista, Simbolo *simbolo){
+    Nodo *nodo = crearNodo(simbolo);
+    nodo -> siguiente = lista -> cabeza;
+    lista-> cabeza = nodo;
 }
-
-// Buscar un símbolo en la tabla de símbolos por nombre
-Simbolo* buscarSimbolo(TablaDeSimbolos* tabla, const char* nombre) {
-    Simbolo* actual = tabla->primero;
-    while (actual != NULL) {
-        if (strcmp(actual->nombre, nombre) == 0) {
-            return actual;  // Simbolo encontrado
+Simbolo * buscar(Lista *lista, char *nombre){
+    Nodo * aux = lista -> cabeza;
+    while(aux){
+        if(strcmp(aux -> simbolo.nombre , nombre)== 0)
+        {
+            return &aux -> simbolo;
         }
-        actual = actual->siguiente;
+        aux = aux -> siguiente;
     }
-    return NULL;  // No encontrado
+    return NULL;
 }
-
-// Liberar la memoria de la tabla de símbolos
-void liberarTabla(TablaDeSimbolos* tabla) {
-    Simbolo* actual = tabla->primero;
-    Simbolo* siguiente;
-    while (actual != NULL) {
-        siguiente = actual->siguiente;
-        free(actual->nombre);  // Liberar el nombre del identificador
-        free(actual);  // Liberar el nodo
-        actual = siguiente;
-    }
-    free(tabla);  // Liberar la tabla
+void modificar(Lista *lista,char *simbolo, int valor){
+    Simbolo*buscado = buscar(lista,simbolo);
+    buscado -> valor = valor;
 }
