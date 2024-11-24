@@ -2,11 +2,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#define LONGITUD_IDS 32
+#define MAX_TS 200
+#define MAX_VARIABLES 25
+
 extern char *yytext;
 extern int yyleng;
 extern int yylex(void);
 extern void yyerror(char*);
-void verificarId (int);
+void verificarLongId (int);
 int variable=0;
 %}
 %union{
@@ -22,7 +26,7 @@ programa: {printf("Ingrese codigo de lenguaje micro\n");} INICIO sentencias FIN 
 sentencias: sentencias sentencia 
 |sentencia
 ;
-sentencia: ID {verificarId(yyleng); "quiero listar los IDs que reciben asignacion"} 
+sentencia: ID {verificarLongId(yyleng);} /* {quiero listar los IDs que reciben asignacion} */ 
 ASIGNACION expresion PYCOMA
 |LEER PARENIZQUIERDO listaVariables PARENDERECHO PYCOMA
 |ESCRIBIR PARENIZQUIERDO parametros PARENDERECHO PYCOMA 
@@ -30,13 +34,13 @@ ASIGNACION expresion PYCOMA
 expresion: primaria 
 |expresion operadorAditivo primaria
 ;
-listaVariables: listaVariables COMA ID {verificarId(yyleng);}
-|ID {verificarId(yyleng);}
+listaVariables: listaVariables COMA ID //{verificarLongId(yyleng);}
+|ID {verificarLongId(yyleng);}
 ;
-parametros: parametros COMA expresion {quiero ver si el id esta declarado}
-|expresion {quiero ver si el id esta declarado}
+parametros: parametros COMA expresion /* {quiero ver si el id esta declarado} */
+|expresion /* {quiero ver si el id esta declarado} */
 ;
-primaria: ID {verificarId(yyleng);}
+primaria: ID {verificarLongId(yyleng);}
 |CONSTANTE {printf("valores %d %d",atoi(yytext),$1); }
 |PARENIZQUIERDO expresion PARENDERECHO
 ;
@@ -47,13 +51,13 @@ operadorAditivo: SUMA
 int main() {
 yyparse();
 }
+
 void yyerror (char *s){
-printf ("mi error personalizado es %s\n",s);
+printf ("Error %s\n",s);
 }
 int yywrap()  {
   return 1;  
 }
-
-void verificarId (int yyleng){
-  if(yyleng>10) yyerror("el ID supera la longitud maxima");
+void verificarLongId (int yyleng){
+  if(yyleng > LONGITUD_IDS) yyerror("Lexico: el ID supera la longitud maxima ()");
 }
