@@ -6,7 +6,7 @@
 	#include "tabla_de_simbolos.h"
 	extern void yyerror(char *s);
 
-	Lista lista = {NULL, 0};
+	Lista lista = {NULL};
 %}
 DIGITO [0-9]
 
@@ -25,14 +25,14 @@ constEntera {DIGITO}({DIGITO})*
 ":=" {return ASIGNACION;}
 {constEntera} {yylval.num=atoi(yytext);return CONSTANTE;}
 {IDENTIFICADOR} {
-		Simbolo *buscado = buscaar(&lista, yytext);
+		Simbolo *buscado = buscar(&lista, yytext);
 			if(buscado == NULL){
 			Simbolo simbolo;
 			strcpy(simbolo.nombre , yytext);
 			simbolo.valor = 0;
 			insertar(&lista, &simbolo);
 			}
-		strcpy(yylval.id, yytext);
+		strcpy(yylval.nombre, yytext);
 		return ID;
 }
 ";" {return PYCOMA;}

@@ -11,8 +11,8 @@ extern void yyerror(char*);
 extern Lista lista;
 
 void verificarId (int);
-int obtenerValor(char *symbol());
-void actualizarSimbolo(char *symbo, int valor);
+//int obtenerValor(char *symbol());
+void actualizarSimbolo(char *symbol, int valor);
 
 %}
 %union{
@@ -28,7 +28,7 @@ programa: {printf("Ingrese codigo de lenguaje micro\n");} INICIO sentencias FIN 
 sentencias: sentencias sentencia 
 |sentencia
 ;
-sentencia: ID {verificarId(yyleng); $$ = 0btenerValor($1)//nose q tan legal es esto} 
+sentencia: ID {verificarId(yyleng);} //$$ = 0btenerValor($1); (nose q tan legal es esto} 
 ASIGNACION expresion PYCOMA
 |LEER PARENIZQUIERDO listaVariables PARENDERECHO PYCOMA{}
 |ESCRIBIR PARENIZQUIERDO parametros PARENDERECHO PYCOMA 
@@ -39,8 +39,8 @@ expresion: primaria
 listaVariables: listaVariables COMA ID {verificarId(yyleng);}
 |ID {verificarId(yyleng);}
 ;
-parametros: parametros COMA expresion {//quiero ver si el id esta declarado}
-|expresion {//quiero ver si el id esta declarado}
+parametros: parametros COMA expresion //{quiero ver si el id esta declarado}
+|expresion //{quiero ver si el id esta declarado}
 ;
 primaria: ID {verificarId(yyleng);}
 |CONSTANTE {printf("valores %d %d",atoi(yytext),$1); }
@@ -51,12 +51,15 @@ operadorAditivo: SUMA
 ;
 %%
 
+/*
 int obtenerValor(char *symbol){
     Simbolo *buscado = buscar(&lista, symbol);
     return buscado -> valor;
 }
+*/
+
 void actualizarSimbolo(char *symbol, int valor ){
-    modificar(&lista, simbol, valor);
+    modificar(&lista, symbol, valor);
 }
 int main() {
 yyparse();

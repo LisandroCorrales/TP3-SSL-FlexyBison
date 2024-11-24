@@ -14,7 +14,7 @@ typedef struct Lista{
     Nodo *cabeza;
 } Lista;
 
-Nodo *crearNodo(simbolo *simbolo);
+Nodo *crearNodo(Simbolo *simbolo);
 void insertar(Lista *lista, Simbolo * simbolo);
 Simbolo *buscar(Lista *lista,char *nombre);
 void modificar(Lista *lista, char * simbolo, int valor);
