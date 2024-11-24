@@ -18,7 +18,7 @@ typedef struct {
     int valor;
 } SIMBOLO;
 static SIMBOLO tablaSimbolos[MAX_TABLA];
-int punteroTabla = 0;
+int cardinalTabla = 0;
 void iniciarTabla()
 
 %}
@@ -76,4 +76,31 @@ void iniciarTabla(){
   for (i=0;i<=MAX_TABLA;i++){
     tablaSimbolos.id = '1'
   }
+}
+int buscarSimbolo(const char* nombre) {
+    for (int i = 0; i < MAX_SIMBOLOS; i++) {
+        if ( strcmp(tablaSimbolos[i].nombre, nombre) == 0) {
+            return i; 
+        }
+    }
+    return -1;  
+}
+
+
+int insertarSimbolo(const char* nombre, int valor) {
+    strcpy(tablaSimbolos[cardinalTabla].nombre, nombre);
+   tablaSimbolos[cardinalTabla].valor = valor;
+   cardinalTabla++;
+   return 0;  
+
+}
+
+// Función para modificar el valor de un símbolo en la tabla
+int modificarSimbolo(const char* nombre, int nuevoValor) {
+    int cardinaBuscado = buscarSimbolo(nombre);
+    if (cardinaBuscado != -1) {  
+        tablaSimbolos[idx].valor = nuevoValor;
+        return 0;  
+    }
+    return -1;  
 }
