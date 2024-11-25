@@ -5,7 +5,8 @@
 #include <math.h>
 
 #define LONGITUD_IDS 32
-#define MAX_TABLA 200
+#define MAX_TABLA 200 
+#define LONGITUD_VECTOR 25
 
 extern char *yytext;
 extern int yyleng;
@@ -18,15 +19,19 @@ typedef struct {
     char id[LONGITUD_IDS + 1];  // 32 caracteres para el id
     int valor;
 } SIMBOLO;
-
+static SIMBOLO vectorDeVariables[LONGITUD_VECTOR];
 static SIMBOLO tablaSimbolos[MAX_TABLA];
+
 int cardinalTabla = 0;
+int cardinalVector = 0;
 
 void iniciarTabla();
-int insertarSimbolo(char*, int);
-int modificarSimbolo(char* nombre, int);
-int buscarSimbolo(char* nombre);
-
+void iniciarVectorSimbolos();
+int insertarSimbolo(char*);
+int modificarSimbolo(char* , int);
+int buscarSimbolo(char* );
+int insertarSimboloVector(char * );
+int buscarSimboloVector(char* ) ;
 %}
 
 %union {
@@ -52,9 +57,9 @@ sentencias:
 ;
 
 sentencia:
-    ID { verificarLongId(yyleng); }
+    ID { verificarLongId(yyleng); insertarSimbolo(yytext);}
     ASIGNACION expresion PYCOMA
-    | LEER PARENIZQUIERDO listaVariables PARENDERECHO PYCOMA
+    |  LEER {iniciarVectorSimbolos();} PARENIZQUIERDO listaVariables PARENDERECHO PYCOMA 
     | ESCRIBIR PARENIZQUIERDO parametros PARENDERECHO PYCOMA
 ;
 
@@ -64,8 +69,8 @@ expresion:
 ;
 
 listaVariables:
-    listaVariables COMA ID { verificarLongId(yyleng); }
-    | ID { verificarLongId(yyleng); }
+    listaVariables COMA ID { verificarLongId(yyleng); insertarSimbolo(yytext); insertarSimboloVector(yytext); }
+    | ID { verificarLongId(yyleng);insertarSimbolo(yytext); insertarSimboloVector(yytext); }
 ;
 
 parametros:
@@ -74,7 +79,9 @@ parametros:
 ;
 
 primaria:
-    ID { verificarLongId(yyleng); }
+    ID { verificarLongId(yyleng); if(buscarSimbolo(yytext)==-1){
+      yyerror("la variable no fue declarada previamente");
+    } }
     | CONSTANTE { printf("valores %d", atoi(yytext)); }
     | PARENIZQUIERDO expresion PARENDERECHO
 ;
@@ -87,6 +94,8 @@ operadorAditivo:
 %%
 
 int main() {
+    iniciarTabla();
+    iniciarVectorSimbolos();
     yyparse();
 }
 
@@ -110,9 +119,16 @@ void iniciarTabla() {
         tablaSimbolos[i].valor = 0;
     }
 }
+void iniciarVectorSimbolos(){
+  int i;
+  for(i = 0; i < LONGITUD_VECTOR; i++) {
+    vectorDeVariables[i].id[0] = '\0'; 
+    vectorDeVariables[i].valor = 0;
+  
+}}
 
 int buscarSimbolo(char* nombre) {
-    for (int i = 0; i < MAX_TABLA; i++) {
+    for (int i = 0; i <cardinalTabla; i++) {
         if (strcmp(tablaSimbolos[i].id, nombre) == 0) {
             return i;  // Retorna el índice del símbolo encontrado
         }
@@ -120,11 +136,30 @@ int buscarSimbolo(char* nombre) {
     return -1;  // No encontrado
 }
 
-int insertarSimbolo(char* nombre, int valor) {
-    strcpy(tablaSimbolos[cardinalTabla].id, nombre);
-    tablaSimbolos[cardinalTabla].valor = valor;
+int insertarSimbolo(char * nombre) {
+    int resultado = buscarSimbolo(nombre);
+    if(resultado == -1){strcpy(tablaSimbolos[cardinalTabla].id,nombre);
     cardinalTabla++;
-    return 0;
+    return 0;}
+    return resultado;
+    
+}
+int insertarSimboloVector(char * nombre) {
+    int resultado = buscarSimboloVector(nombre);
+    if(resultado == -1){strcpy(vectorDeVariables[cardinalVector].id,nombre);
+    cardinalVector++;
+    return 0;}
+    yyerror("no se puede declarar mas de una vez en un mismo argumento");
+    return resultado;
+    
+}
+int buscarSimboloVector(char* nombre) {
+    for (int i = 0; i <cardinalVector; i++) {
+        if (strcmp(vectorDeVariables[i].id, nombre) == 0) {
+            return i;  // Retorna el índice del símbolo encontrado
+        }
+    }
+    return -1;  // No encontrado
 }
 
 int modificarSimbolo(char* nombre, int nuevoValor) {
@@ -135,3 +170,4 @@ int modificarSimbolo(char* nombre, int nuevoValor) {
     }
     return -1;  // No encontrado
 }
+
