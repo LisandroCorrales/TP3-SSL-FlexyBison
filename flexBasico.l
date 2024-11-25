@@ -1,12 +1,7 @@
 %{
 	#include <stdio.h>
 	#include <stdlib.h>
-	#include <string.h>
 	#include "y.tab.h"
-	#include "tabla_de_simbolos.h"
-	extern void yyerror(char *s);
-
-	Lista lista = {NULL};
 %}
 DIGITO [0-9]
 
@@ -31,5 +26,4 @@ constEntera {DIGITO}({DIGITO})*
 ")" {return PARENDERECHO;}
 "+" {return SUMA;}
 "-" {return RESTA;}
-
 %%
